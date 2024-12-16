@@ -12,6 +12,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Str;
+use Filament\Forms\Set;
+use Filament\Tables\Columns\TextColumn;
 
 class TagResource extends Resource
 {
@@ -22,16 +26,20 @@ class TagResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                //
-            ]);
+        ->schema([
+            TextInput::make('name')->live(onBlur: true)
+            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))->required(),
+            TextInput::make('slug')->required()
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('id')->limit(50)->sortable(),
+                TextColumn::make('name')->limit(50)->sortable(),
+                TextColumn::make('slug')->limit(50)
             ])
             ->filters([
                 //
